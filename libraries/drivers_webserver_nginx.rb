@@ -23,6 +23,12 @@ module Drivers
           node['deploy'][app['shortname']]['webserver'] || {}
         ).symbolize_keys
         output[:extra_config_ssl] = output[:extra_config] if output[:extra_config_ssl] == true
+
+        # If SOURCE_FILE_SIZE_LIMIT ENV VAR is set, then use that for client_max_body_size
+        if source_file_size_limit = app.dig('environment', 'SOURCE_FILE_SIZE_LIMIT')
+          output[:client_max_body_size] = "#{source_file_size_limit}m"
+        end
+
         output
       end
 
